@@ -1,7 +1,6 @@
 # Orizon - Docker Compose Configuration
 # Local development environment
-
-version: '3.8'
+# Ports: postgres:5442, redis:6390, orizon:4010 (to avoid conflicts)
 
 services:
   postgres:
@@ -13,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: orizon
     ports:
-      - "5432:5432"
+      - "5442:5432"  # Host:Container - using 5442 to avoid conflicts
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -30,7 +29,7 @@ services:
     restart: unless-stopped
     command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      - "6390:6379"  # Host:Container - using 6390 to avoid conflicts
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 10s
@@ -48,7 +47,7 @@ services:
     container_name: orizon-proxy
     restart: unless-stopped
     ports:
-      - "4000:4000"
+      - "4010:4000"  # Host:Container - using 4010 to avoid conflicts
     environment:
       # Database
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/orizon
