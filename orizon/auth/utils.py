@@ -220,13 +220,17 @@ async def create_key_for_user(user_id: str) -> Optional[str]:
     Returns:
         Virtual key string or None on failure
     """
+    import uuid
+
     async with httpx.AsyncClient() as client:
         try:
+            # Use unique alias for each key (LiteLLM requires unique aliases)
+            unique_suffix = uuid.uuid4().hex[:8]
             response = await client.post(
                 f"{LITELLM_BASE_URL}/key/generate",
                 json={
                     "user_id": user_id,
-                    "key_alias": f"orizon-auto-{user_id}",
+                    "key_alias": f"orizon-{user_id}-{unique_suffix}",
                 },
                 headers={
                     "Authorization": f"Bearer {LITELLM_MASTER_KEY}",
