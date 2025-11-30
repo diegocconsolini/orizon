@@ -20,6 +20,7 @@ from pydantic import BaseModel, EmailStr
 from .utils import generate_user_id, get_or_create_user_key, get_user
 from .tokens import create_magic_link_token, verify_magic_link_token
 from .email import send_magic_link_email
+from .sessions import create_session, set_session_cookie, delete_session, clear_session_cookie, get_session_cookie
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +191,7 @@ async def verify_token(token: str, response: Response):
             )
 
         email = token_data["email"]
+        name = token_data.get("name")
 
         # Create/get user and generate virtual key
         user_data, virtual_key = await get_or_create_user_key(email)
@@ -200,8 +202,17 @@ async def verify_token(token: str, response: Response):
                 detail="Failed to create session",
             )
 
-        # TODO: Create session and set cookie (Checkpoint 1.11)
-        # For now, return the key (not secure, just for testing)
+        # Create session
+        user_id = user_data.get("user_id") or user_data.get("user_info", {}).get("user_id")
+        session_token = await create_session(
+            email=email,
+            user_id=user_id,
+            virtual_key=virtual_key,
+            name=name,
+        )
+
+        # Set session cookie
+        set_session_cookie(response, session_token)
 
         return TokenVerifyResponse(
             success=True,
@@ -218,3 +229,19 @@ async def verify_token(token: str, response: Response):
             status_code=500,
             detail="Verification failed. Please try again.",
         )
+
+
+@router.post("/logout")
+async def logout(request: Request, response: Response):
+    """Log out the current user.
+
+    Deletes session and clears cookie.
+    """
+    session_token = get_session_cookie(request)
+
+    if session_token:
+        await delete_session(session_token)
+
+    clear_session_cookie(response)
+
+    return {"success": True, "message": "Logged out successfully"}
