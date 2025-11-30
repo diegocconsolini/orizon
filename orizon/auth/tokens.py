@@ -59,7 +59,7 @@ async def create_magic_link_token(
     # Token data to store
     token_data = {
         "email": email,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "is_signup": "1" if is_signup else "0",
     }
 
