@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-11-30
 **Session Status:** Phase 0 Complete, Ready for Phase 1
-**Git Branch:** `phase-0-foundation`
+**Git Branch:** `main`
 **Git Tag:** `v0.1-foundation-complete`
 
 ---
@@ -165,16 +165,16 @@ Continue Orizon implementation from Phase 1.
 Current state:
 - Phase 0 complete (foundation)
 - Repository: /home/diegocc/orizon-repo
-- Branch: phase-0-foundation (tag: v0.1-foundation-complete)
+- Branch: main
 - Docker running: postgres:5442, redis:6390, orizon:4010
 
 Next task: Checkpoint 1.1 - Create auth middleware file structure
-- Create branch: phase-1-authentication
+- Work on main branch (no new branches)
 - Create orizon/auth/middleware.py
 - Create orizon/auth/utils.py
 
 Follow EXECUTION-PLAN.md for checkpoint details.
-Use git commits after each checkpoint.
+Commit after each checkpoint to main.
 ```
 
 ---
